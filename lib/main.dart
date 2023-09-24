@@ -2,6 +2,7 @@
 
 import 'package:fever_therm/pages/home_page.dart';
 import 'package:fever_therm/pages/login_page.dart';
+import 'package:fever_therm/utils/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -14,17 +15,19 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
         themeMode: ThemeMode.light,
-        theme: ThemeData(primarySwatch: Colors.deepPurple,
-        fontFamily: GoogleFonts.lato().fontFamily,
-        primaryTextTheme: GoogleFonts.latoTextTheme()),
+        theme: ThemeData(
+            primarySwatch: Colors.deepPurple,
+            fontFamily: GoogleFonts.lato().fontFamily,
+            primaryTextTheme: GoogleFonts.latoTextTheme()),
         darkTheme: ThemeData(
           brightness: Brightness.dark,
         ),
-        initialRoute: "/home",
+        debugShowCheckedModeBanner: false,
+        initialRoute: "/",
         routes: {
           "/": (context) => LoginPage(),
-          "/home": (context) => HomePage(),
-          "/login": ((context) => LoginPage()),
+          Myroutes.homeRoute: (context) => HomePage(),
+          Myroutes.loginRoute: ((context) => LoginPage())
         });
   }
 }

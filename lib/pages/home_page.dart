@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_const_constructors
+
 import 'package:fever_therm/widgets/drawer.dart';
 import 'package:flutter/material.dart';
 
@@ -9,7 +11,8 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Thermistor App"),
+        title: Text("Thermistor App",
+            style: Theme.of(context).textTheme.titleLarge),
       ),
       body: Center(
         child: Container(

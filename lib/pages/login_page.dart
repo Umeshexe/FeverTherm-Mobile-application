@@ -1,11 +1,22 @@
-// ignore_for_file: prefer_const_constructors, sort_child_properties_last, use_build_context_synchronously, curly_braces_in_flow_control_structures
+// ignore_for_file: prefer_const_constructors
 
-import 'package:fever_therm/utils/routes.dart';
 import 'package:flutter/material.dart';
 
+class MyRoutes {
+  static const String homeRoute = '/';
+}
+
 class LoginPage extends StatefulWidget {
+  final Function toggleTemperatureCallback;
+  final Function toggleLightSensorCallback;
+
+  LoginPage({
+    required this.toggleTemperatureCallback,
+    required this.toggleLightSensorCallback,
+  });
+
   @override
-  State<LoginPage> createState() => _LoginPageState();
+  _LoginPageState createState() => _LoginPageState();
 }
 
 class _LoginPageState extends State<LoginPage> {
@@ -13,6 +24,7 @@ class _LoginPageState extends State<LoginPage> {
   bool changeButton = false;
 
   final _formkey = GlobalKey<FormState>();
+
   moveToHome(BuildContext context) async {
     if (_formkey.currentState!.validate()) {
       setState(() {
@@ -20,7 +32,8 @@ class _LoginPageState extends State<LoginPage> {
       });
 
       await Future.delayed(Duration(seconds: 1));
-      await Navigator.pushNamed(context, Myroutes.homeRoute);
+
+      await Navigator.pushNamed(context, MyRoutes.homeRoute);
 
       setState(() {
         changeButton = false;
@@ -78,13 +91,13 @@ class _LoginPageState extends State<LoginPage> {
                       obscureText: true,
                       decoration: InputDecoration(
                         hintText: "Enter password",
-                        labelText: "Password ",
+                        labelText: "Password",
                       ),
                       validator: (value) {
                         if (value!.isEmpty) {
                           return "Password cannot be empty";
                         } else if (value.length < 6) {
-                          return "Password length should be atleast 6";
+                          return "Password length should be at least 6";
                         }
                         return null;
                       },
@@ -93,33 +106,35 @@ class _LoginPageState extends State<LoginPage> {
                       height: 40.0,
                     ),
                     Material(
-                        color: Colors.deepPurple,
-                        borderRadius:
-                            BorderRadius.circular(changeButton ? 50 : 8),
-                        child: InkWell(
-                          onTap: () => moveToHome(context),
-                          child: AnimatedContainer(
-                            duration: Duration(seconds: 1),
-                            width: changeButton ? 50 : 150,
-                            height: 50,
-                            alignment: Alignment.center,
-                            child: changeButton
-                                ? Icon(
-                                    Icons.done,
+                      color: Colors.deepPurple,
+                      borderRadius:
+                          BorderRadius.circular(changeButton ? 50 : 8),
+                      child: InkWell(
+                        onTap: () => moveToHome(context),
+                        child: AnimatedContainer(
+                          duration: Duration(seconds: 1),
+                          width: changeButton ? 50 : 150,
+                          height: 50,
+                          alignment: Alignment.center,
+                          child: changeButton
+                              ? Icon(
+                                  Icons.done,
+                                  color: Colors.white,
+                                )
+                              : Text(
+                                  "Login",
+                                  style: TextStyle(
                                     color: Colors.white,
-                                  )
-                                : Text(
-                                    "Login",
-                                    style: TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 18),
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 18,
                                   ),
-                          ),
-                        ))
+                                ),
+                        ),
+                      ),
+                    ),
                   ],
                 ),
-              )
+              ),
             ],
           ),
         ),

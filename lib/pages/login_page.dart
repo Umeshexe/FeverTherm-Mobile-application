@@ -1,18 +1,17 @@
 // ignore_for_file: prefer_const_constructors
 
 import 'package:flutter/material.dart';
-
-class MyRoutes {
-  static const String homeRoute = '/';
-}
+import 'package:fever_therm/main.dart';
 
 class LoginPage extends StatefulWidget {
   final Function toggleTemperatureCallback;
   final Function toggleLightSensorCallback;
+  final Function toggleCpuTemperatureCallback;
 
   LoginPage({
     required this.toggleTemperatureCallback,
     required this.toggleLightSensorCallback,
+    required this.toggleCpuTemperatureCallback,
   });
 
   @override
@@ -25,7 +24,7 @@ class _LoginPageState extends State<LoginPage> {
 
   final _formkey = GlobalKey<FormState>();
 
-  moveToHome(BuildContext context) async {
+  void moveToHome(BuildContext context) async {
     if (_formkey.currentState!.validate()) {
       setState(() {
         changeButton = true;
@@ -33,11 +32,13 @@ class _LoginPageState extends State<LoginPage> {
 
       await Future.delayed(Duration(seconds: 1));
 
-      await Navigator.pushNamed(context, MyRoutes.homeRoute);
-
-      setState(() {
-        changeButton = false;
-      });
+      if (mounted) {
+        // Check whether the widget is still in the widget tree
+        await Navigator.pushNamed(context, MyRoutes.homeRoute);
+        setState(() {
+          changeButton = false;
+        });
+      }
     }
   }
 

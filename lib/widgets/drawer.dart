@@ -1,19 +1,21 @@
-// ignore_for_file: prefer_const_constructors
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class MyDrawer extends StatelessWidget {
   final bool showTemperature;
   final bool showLightSensor;
+  final bool showCpuTemperature;
   final Function toggleTemperatureCallback;
   final Function toggleLightSensorCallback;
+  final Function toggleCpuTemperatureCallback;
 
   MyDrawer({
     required this.showTemperature,
     required this.showLightSensor,
+    required this.showCpuTemperature,
     required this.toggleTemperatureCallback,
     required this.toggleLightSensorCallback,
+    required this.toggleCpuTemperatureCallback,
   });
 
   @override
@@ -77,9 +79,9 @@ class MyDrawer extends StatelessWidget {
                 style: TextStyle(color: Colors.white),
               ),
               trailing: CustomSwitch(
-                value: showTemperature,
+                value: showCpuTemperature,
                 onChanged: (value) {
-                  toggleTemperatureCallback(value);
+                  toggleCpuTemperatureCallback(value);
                 },
               ),
             ),

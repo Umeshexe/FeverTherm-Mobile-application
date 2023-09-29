@@ -37,9 +37,7 @@ dependencies:
   cupertino_icons: ^1.0.2
   google_fonts: ^6.1.0
   environment_sensors: ^0.3.0
-  cpu_reader: ^3.0.0
-
-
+  cpu_reader: 
 
 
 dev_dependencies:

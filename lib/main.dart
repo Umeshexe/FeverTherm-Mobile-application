@@ -1,3 +1,5 @@
+// ignore_for_file: unused_import
+
 import 'package:flutter/material.dart';
 import 'package:fever_therm/pages/home_page.dart';
 import 'package:fever_therm/pages/login_page.dart';
@@ -5,6 +7,8 @@ import 'package:fever_therm/utils/routes.dart';
 import 'package:fever_therm/widgets/themes.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:environment_sensors/environment_sensors.dart';
+import 'package:cpu_reader/cpu_reader.dart';
+import 'package:fever_therm/main.dart';
 
 void main() {
   runApp(MyApp());
@@ -23,8 +27,8 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   bool _showTemperature = false;
   bool _showLightSensor = false;
+  bool _showCpuTemperature = false;
 
-  // Create an instance of the EnvironmentSensors class
   final environmentSensors = EnvironmentSensors();
 
   void _toggleTemperature(bool value) {
@@ -39,6 +43,12 @@ class _MyAppState extends State<MyApp> {
     });
   }
 
+  void _toggleCpuTemperature(bool value) {
+    setState(() {
+      _showCpuTemperature = value;
+    });
+  }
+
   Future<double> getTemperatureCallback() async {
     var temperatureSensor = environmentSensors.temperature;
     var temperatureReading = await temperatureSensor.first;
@@ -47,6 +57,11 @@ class _MyAppState extends State<MyApp> {
 
   Stream<double> getLightSensorCallback() {
     return environmentSensors.light;
+  }
+
+  Stream<double> getCpuTemperatureCallback() {
+    return CpuReader.cpuStream(1000)
+        .map((cpuInfo) => cpuInfo.cpuTemperature ?? 0.0);
   }
 
   @override
@@ -61,14 +76,18 @@ class _MyAppState extends State<MyApp> {
         MyRoutes.loginRoute: (context) => LoginPage(
               toggleTemperatureCallback: _toggleTemperature,
               toggleLightSensorCallback: _toggleLightSensor,
+              toggleCpuTemperatureCallback: _toggleCpuTemperature,
             ),
         MyRoutes.homeRoute: (context) => HomePage(
               showTemperature: _showTemperature,
               showLightSensor: _showLightSensor,
+              showCpuTemperature: _showCpuTemperature,
               toggleTemperatureCallback: _toggleTemperature,
               toggleLightSensorCallback: _toggleLightSensor,
+              toggleCpuTemperatureCallback: _toggleCpuTemperature,
               getTemperatureCallback: getTemperatureCallback,
               getLightSensorCallback: getLightSensorCallback,
+              getCpuTemperatureCallback: getCpuTemperatureCallback,
             ),
       },
     );

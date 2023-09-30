@@ -7,23 +7,29 @@ class HomePage extends StatelessWidget {
   final bool showTemperature;
   final bool showLightSensor;
   final bool showCpuTemperature;
+  final bool showBatteryInfo;
   final Function getTemperatureCallback;
   final Function getLightSensorCallback;
   final Function getCpuTemperatureCallback;
+  final Function getBatteryInfoCallback;
   final Function toggleTemperatureCallback;
   final Function toggleLightSensorCallback;
   final Function toggleCpuTemperatureCallback;
+  final Function toggleBatteryInfoCallback;
 
   HomePage({
     required this.showTemperature,
     required this.showLightSensor,
     required this.showCpuTemperature,
+    required this.showBatteryInfo,
     required this.getTemperatureCallback,
     required this.getLightSensorCallback,
     required this.getCpuTemperatureCallback,
+    required this.getBatteryInfoCallback,
     required this.toggleTemperatureCallback,
     required this.toggleLightSensorCallback,
     required this.toggleCpuTemperatureCallback,
+    required this.toggleBatteryInfoCallback,
   });
 
   @override
@@ -90,15 +96,34 @@ class HomePage extends StatelessWidget {
                 }
               },
             ),
+          if (showBatteryInfo)
+            StreamBuilder<double>(
+              stream: getBatteryInfoCallback(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return CircularProgressIndicator();
+                } else if (snapshot.hasError) {
+                  return Text('Error: ${snapshot.error}');
+                } else {
+                  final batteryInfo = snapshot.data ?? 0.0;
+                  return Text(
+                    'The Current Battery Info is: ${batteryInfo.toStringAsFixed(2)}',
+                    style: TextStyle(fontSize: 18),
+                  );
+                }
+              },
+            ),
         ],
       ),
       drawer: MyDrawer(
         showTemperature: showTemperature,
         showLightSensor: showLightSensor,
         showCpuTemperature: showCpuTemperature,
+        showBatteryInfo: showBatteryInfo,
         toggleTemperatureCallback: toggleTemperatureCallback,
         toggleLightSensorCallback: toggleLightSensorCallback,
         toggleCpuTemperatureCallback: toggleCpuTemperatureCallback,
+        toggleBatteryInfoCallback: toggleBatteryInfoCallback,
       ),
     );
   }

@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_const_constructors, use_key_in_widget_constructors, prefer_const_constructors_in_immutables
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -5,17 +7,21 @@ class MyDrawer extends StatelessWidget {
   final bool showTemperature;
   final bool showLightSensor;
   final bool showCpuTemperature;
+  final bool showBatteryInfo;
   final Function toggleTemperatureCallback;
   final Function toggleLightSensorCallback;
   final Function toggleCpuTemperatureCallback;
+  final Function toggleBatteryInfoCallback;
 
   MyDrawer({
     required this.showTemperature,
     required this.showLightSensor,
     required this.showCpuTemperature,
+    required this.showBatteryInfo,
     required this.toggleTemperatureCallback,
     required this.toggleLightSensorCallback,
     required this.toggleCpuTemperatureCallback,
+    required this.toggleBatteryInfoCallback,
   });
 
   @override
@@ -82,6 +88,19 @@ class MyDrawer extends StatelessWidget {
                 value: showCpuTemperature,
                 onChanged: (value) {
                   toggleCpuTemperatureCallback(value);
+                },
+              ),
+            ),
+            ListTile(
+              title: Text(
+                "Battery Info",
+                textScaleFactor: 1.2,
+                style: TextStyle(color: Colors.white),
+              ),
+              trailing: CustomSwitch(
+                value: showBatteryInfo,
+                onChanged: (value) {
+                  toggleBatteryInfoCallback(value);
                 },
               ),
             ),

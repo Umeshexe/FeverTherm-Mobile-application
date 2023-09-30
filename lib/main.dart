@@ -9,6 +9,9 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:environment_sensors/environment_sensors.dart';
 import 'package:cpu_reader/cpu_reader.dart';
 import 'package:fever_therm/main.dart';
+import 'package:battery_info/battery_info_plugin.dart';
+import 'package:battery_info/model/android_battery_info.dart';
+import 'package:battery_info/enums/charging_status.dart';
 
 void main() {
   runApp(MyApp());
@@ -28,6 +31,7 @@ class _MyAppState extends State<MyApp> {
   bool _showTemperature = false;
   bool _showLightSensor = false;
   bool _showCpuTemperature = false;
+  bool _showBatteryInfo = false; // Add this line
 
   final environmentSensors = EnvironmentSensors();
 
@@ -49,6 +53,13 @@ class _MyAppState extends State<MyApp> {
     });
   }
 
+  void _toggleBatteryInfo(bool value) {
+    // Add this method
+    setState(() {
+      _showBatteryInfo = value;
+    });
+  }
+
   Future<double> getTemperatureCallback() async {
     var temperatureSensor = environmentSensors.temperature;
     var temperatureReading = await temperatureSensor.first;
@@ -64,6 +75,13 @@ class _MyAppState extends State<MyApp> {
         .map((cpuInfo) => cpuInfo.cpuTemperature ?? 0.0);
   }
 
+  Stream<double> getBatteryInfoCallback() {
+    return Stream.periodic(Duration(seconds: 1), (count) async {
+      var batteryInfo = await BatteryInfoPlugin().iosBatteryInfo;
+      return batteryInfo!.batteryLevel!.toDouble();
+    }).asyncMap((event) => event);
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -77,17 +95,21 @@ class _MyAppState extends State<MyApp> {
               toggleTemperatureCallback: _toggleTemperature,
               toggleLightSensorCallback: _toggleLightSensor,
               toggleCpuTemperatureCallback: _toggleCpuTemperature,
+              toggleBatteryInfoCallback: _toggleBatteryInfo, // Add this line
             ),
         MyRoutes.homeRoute: (context) => HomePage(
               showTemperature: _showTemperature,
               showLightSensor: _showLightSensor,
               showCpuTemperature: _showCpuTemperature,
+              showBatteryInfo: _showBatteryInfo, // Add this line
               toggleTemperatureCallback: _toggleTemperature,
               toggleLightSensorCallback: _toggleLightSensor,
               toggleCpuTemperatureCallback: _toggleCpuTemperature,
+              toggleBatteryInfoCallback: _toggleBatteryInfo, // Add this line
               getTemperatureCallback: getTemperatureCallback,
               getLightSensorCallback: getLightSensorCallback,
               getCpuTemperatureCallback: getCpuTemperatureCallback,
+              getBatteryInfoCallback: getBatteryInfoCallback, // Add this line
             ),
       },
     );

@@ -4,16 +4,16 @@ import 'package:flutter/material.dart';
 import 'package:fever_therm/main.dart';
 
 class LoginPage extends StatefulWidget {
-  final Function toggleTemperatureCallback;
   final Function toggleLightSensorCallback;
   final Function toggleCpuTemperatureCallback;
   final Function toggleBatteryInfoCallback; // Add this line
 
   LoginPage({
-    required this.toggleTemperatureCallback,
     required this.toggleLightSensorCallback,
     required this.toggleCpuTemperatureCallback,
-    required this.toggleBatteryInfoCallback, // Add this line
+    required this.toggleBatteryInfoCallback,
+    required void Function(bool value)
+        toggleThermalStateCallback, // Add this line
   });
   @override
   _LoginPageState createState() => _LoginPageState();

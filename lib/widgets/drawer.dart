@@ -4,24 +4,26 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class MyDrawer extends StatelessWidget {
-  final bool showTemperature;
   final bool showLightSensor;
   final bool showCpuTemperature;
   final bool showBatteryInfo;
+  final bool showThermalState;
   final Function toggleTemperatureCallback;
   final Function toggleLightSensorCallback;
   final Function toggleCpuTemperatureCallback;
   final Function toggleBatteryInfoCallback;
+  final Function toggleThermalStateCallback;
 
   MyDrawer({
-    required this.showTemperature,
     required this.showLightSensor,
     required this.showCpuTemperature,
     required this.showBatteryInfo,
+    required this.showThermalState,
     required this.toggleTemperatureCallback,
     required this.toggleLightSensorCallback,
     required this.toggleCpuTemperatureCallback,
     required this.toggleBatteryInfoCallback,
+    required this.toggleThermalStateCallback,
   });
 
   @override
@@ -54,14 +56,14 @@ class MyDrawer extends StatelessWidget {
             ),
             ListTile(
               title: Text(
-                "Temperature",
+                "Thermal State",
                 textScaleFactor: 1.2,
                 style: TextStyle(color: Colors.white),
               ),
               trailing: CustomSwitch(
-                value: showTemperature,
+                value: showThermalState,
                 onChanged: (value) {
-                  toggleTemperatureCallback(value);
+                  toggleThermalStateCallback(value);
                 },
               ),
             ),

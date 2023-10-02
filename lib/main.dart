@@ -10,8 +10,10 @@ import 'package:environment_sensors/environment_sensors.dart';
 import 'package:cpu_reader/cpu_reader.dart';
 import 'package:fever_therm/main.dart';
 import 'package:battery_info/battery_info_plugin.dart';
-import 'package:battery_info/model/android_battery_info.dart';
 import 'package:battery_info/enums/charging_status.dart';
+import 'package:battery_info/model/android_battery_info.dart';
+import 'package:battery_info/model/iso_battery_info.dart';
+import 'package:thermal/thermal.dart';
 
 void main() {
   runApp(MyApp());
@@ -28,16 +30,17 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  bool _showTemperature = false;
+  bool _showThermalState = false;
   bool _showLightSensor = false;
   bool _showCpuTemperature = false;
   bool _showBatteryInfo = false; // Add this line
 
   final environmentSensors = EnvironmentSensors();
 
-  void _toggleTemperature(bool value) {
+  void _toggleThermalState(bool value) {
+    // Add this method
     setState(() {
-      _showTemperature = value;
+      _showThermalState = value;
     });
   }
 
@@ -60,10 +63,9 @@ class _MyAppState extends State<MyApp> {
     });
   }
 
-  Future<double> getTemperatureCallback() async {
-    var temperatureSensor = environmentSensors.temperature;
-    var temperatureReading = await temperatureSensor.first;
-    return temperatureReading;
+  Stream<ThermalStatus> getThermalStatusCallback() {
+    // Add this method
+    return Thermal().onThermalStatusChanged;
   }
 
   Stream<double> getLightSensorCallback() {
@@ -75,11 +77,22 @@ class _MyAppState extends State<MyApp> {
         .map((cpuInfo) => cpuInfo.cpuTemperature ?? 0.0);
   }
 
-  Stream<double> getBatteryInfoCallback() {
-    return Stream.periodic(Duration(seconds: 1), (count) async {
-      var batteryInfo = await BatteryInfoPlugin().iosBatteryInfo;
-      return batteryInfo!.batteryLevel!.toDouble();
-    }).asyncMap((event) => event);
+  Stream<AndroidBatteryInfo> getBatteryInfoCallback() {
+    return Stream.periodic(Duration(milliseconds: 100), (count) async {
+      var batteryInfo = await BatteryInfoPlugin().androidBatteryInfo;
+      if (batteryInfo != null) {
+        return batteryInfo;
+      } else {
+        throw Exception('Failed to load battery info');
+      }
+    }).asyncMap((event) async {
+      var batteryInfo = await BatteryInfoPlugin().androidBatteryInfo;
+      if (batteryInfo != null) {
+        return batteryInfo;
+      } else {
+        throw Exception('Failed to load battery info');
+      }
+    });
   }
 
   @override
@@ -92,21 +105,22 @@ class _MyAppState extends State<MyApp> {
       initialRoute: MyRoutes.loginRoute,
       routes: {
         MyRoutes.loginRoute: (context) => LoginPage(
-              toggleTemperatureCallback: _toggleTemperature,
+              toggleThermalStateCallback: _toggleThermalState,
               toggleLightSensorCallback: _toggleLightSensor,
               toggleCpuTemperatureCallback: _toggleCpuTemperature,
               toggleBatteryInfoCallback: _toggleBatteryInfo, // Add this line
             ),
         MyRoutes.homeRoute: (context) => HomePage(
-              showTemperature: _showTemperature,
+              showThermalState: _showThermalState,
               showLightSensor: _showLightSensor,
               showCpuTemperature: _showCpuTemperature,
               showBatteryInfo: _showBatteryInfo, // Add this line
-              toggleTemperatureCallback: _toggleTemperature,
+              toggleThermalStateCallback: _toggleThermalState,
               toggleLightSensorCallback: _toggleLightSensor,
               toggleCpuTemperatureCallback: _toggleCpuTemperature,
-              toggleBatteryInfoCallback: _toggleBatteryInfo, // Add this line
-              getTemperatureCallback: getTemperatureCallback,
+              toggleBatteryInfoCallback: _toggleBatteryInfo,
+              getThermalStateCallback:
+                  getThermalStatusCallback, // Remove parentheses
               getLightSensorCallback: getLightSensorCallback,
               getCpuTemperatureCallback: getCpuTemperatureCallback,
               getBatteryInfoCallback: getBatteryInfoCallback, // Add this line

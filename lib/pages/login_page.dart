@@ -12,8 +12,8 @@ class LoginPage extends StatefulWidget {
     required this.toggleLightSensorCallback,
     required this.toggleCpuTemperatureCallback,
     required this.toggleBatteryInfoCallback,
-    required void Function(bool value)
-        toggleThermalStateCallback, // Add this line
+    required void Function(bool value) toggleThermalStateCallback,
+    required void Function(bool value) toggleCsvDataCallback, // Add this line
   });
   @override
   _LoginPageState createState() => _LoginPageState();

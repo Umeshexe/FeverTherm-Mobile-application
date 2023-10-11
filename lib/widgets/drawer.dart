@@ -8,22 +8,24 @@ class MyDrawer extends StatelessWidget {
   final bool showCpuTemperature;
   final bool showBatteryInfo;
   final bool showThermalState;
-  final Function toggleTemperatureCallback;
+  final bool showCsvData;
   final Function toggleLightSensorCallback;
   final Function toggleCpuTemperatureCallback;
   final Function toggleBatteryInfoCallback;
   final Function toggleThermalStateCallback;
+  final Function toggleCsvDataCallback;
 
   MyDrawer({
     required this.showLightSensor,
     required this.showCpuTemperature,
     required this.showBatteryInfo,
     required this.showThermalState,
-    required this.toggleTemperatureCallback,
+    required this.showCsvData,
     required this.toggleLightSensorCallback,
     required this.toggleCpuTemperatureCallback,
     required this.toggleBatteryInfoCallback,
     required this.toggleThermalStateCallback,
+    required this.toggleCsvDataCallback,
   });
 
   @override
@@ -106,6 +108,19 @@ class MyDrawer extends StatelessWidget {
                 },
               ),
             ),
+            ListTile(
+              title: Text(
+                "CSV data",
+                textScaleFactor: 1.2,
+                style: TextStyle(color: Colors.white),
+              ),
+              trailing: CustomSwitch(
+                value: showCsvData,
+                onChanged: (value) {
+                  toggleCsvDataCallback(value);
+                },
+              ),
+            ),
           ],
         ),
       ),
@@ -132,20 +147,20 @@ class _CustomSwitchState extends State<CustomSwitch> {
   @override
   void initState() {
     super.initState();
-    _value = widget.value;
+    _value = widget.value; // Initialize _value in the initState method
   }
 
   @override
   Widget build(BuildContext context) {
     return CupertinoSwitch(
-      value: _value,
+      value: _value, // Use the local _value variable
       activeColor: Colors.green,
       trackColor: Colors.grey,
       onChanged: (value) {
         setState(() {
-          _value = value;
+          _value = value; // Update the local _value variable
         });
-        widget.onChanged(value);
+        widget.onChanged(value); // Notify the parent widget about the change
       },
     );
   }

@@ -1,5 +1,6 @@
-// ignore_for_file: prefer_const_constructors, use_key_in_widget_constructors
+// ignore_for_file: prefer_const_constructors, use_key_in_widget_constructors, prefer_const_literals_to_create_immutables
 
+import 'package:fever_therm/widgets/csv.dart';
 import 'package:thermal/thermal.dart';
 import 'package:battery_info/model/android_battery_info.dart';
 import 'package:flutter/material.dart';
@@ -11,28 +12,34 @@ class HomePage extends StatelessWidget {
   final bool showLightSensor;
   final bool showCpuTemperature;
   final bool showBatteryInfo;
+  final bool showCsvData;
+  final Function getThermalStateCallback;
   final Function getLightSensorCallback;
   final Function getCpuTemperatureCallback;
   final Function getBatteryInfoCallback;
+  final Function getCsvDataCallback; // Define the callback here
   final void Function(bool value) toggleThermalStateCallback;
-  final Function getThermalStateCallback; // Corrected line
   final Function toggleLightSensorCallback;
   final Function toggleCpuTemperatureCallback;
   final Function toggleBatteryInfoCallback;
+  final Function toggleCsvDataCallback;
 
   HomePage({
     required this.showThermalState,
     required this.showLightSensor,
     required this.showCpuTemperature,
     required this.showBatteryInfo,
+    required this.showCsvData,
     required this.getThermalStateCallback,
     required this.getLightSensorCallback,
     required this.getCpuTemperatureCallback,
     required this.getBatteryInfoCallback,
+    required this.getCsvDataCallback,
     required this.toggleThermalStateCallback,
     required this.toggleLightSensorCallback,
     required this.toggleCpuTemperatureCallback,
     required this.toggleBatteryInfoCallback,
+    required this.toggleCsvDataCallback,
   });
 
   @override
@@ -157,7 +164,7 @@ class HomePage extends StatelessWidget {
                 } else if (snapshot.hasData) {
                   final cpuTemp = snapshot.data ?? 0.0;
                   return Card(
-                    color: Colors.blueGrey,
+                    color: const Color.fromARGB(255, 2, 164, 245),
                     margin: EdgeInsets.all(8.0),
                     child: Padding(
                       padding: const EdgeInsets.all(16.0),
@@ -194,7 +201,7 @@ class HomePage extends StatelessWidget {
                   final formattedTemperature =
                       batteryTemperature.toStringAsFixed(2);
                   return Card(
-                    color: Colors.blueGrey,
+                    color: Color.fromARGB(255, 235, 208, 4),
                     margin: EdgeInsets.all(8.0),
                     child: Padding(
                       padding: const EdgeInsets.all(16.0),
@@ -243,6 +250,22 @@ class HomePage extends StatelessWidget {
                 }
               },
             ),
+          if (showCsvData)
+            StreamBuilder<List<List<dynamic>>>(
+              stream: getCsvDataCallback(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return CustomLoadingAnimation();
+                } else if (snapshot.hasData) {
+                  final csvData = snapshot.data;
+                  return CsvDataWidget(csvData: csvData);
+                } else if (snapshot.hasError) {
+                  return Text('Error: ${snapshot.error}');
+                } else {
+                  return SizedBox(); // Handle other cases as needed.
+                }
+              },
+            ),
         ],
       ),
       drawer: MyDrawer(
@@ -250,11 +273,13 @@ class HomePage extends StatelessWidget {
         showLightSensor: showLightSensor,
         showCpuTemperature: showCpuTemperature,
         showBatteryInfo: showBatteryInfo,
+        showCsvData: showCsvData, // Use the correct parameter
         toggleThermalStateCallback: toggleThermalStateCallback,
         toggleLightSensorCallback: toggleLightSensorCallback,
         toggleCpuTemperatureCallback: toggleCpuTemperatureCallback,
         toggleBatteryInfoCallback: toggleBatteryInfoCallback,
-        toggleTemperatureCallback: toggleCpuTemperatureCallback,
+        toggleCsvDataCallback:
+            toggleCsvDataCallback, // Use the correct parameter
       ),
     );
   }

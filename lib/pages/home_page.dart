@@ -6,6 +6,7 @@ import 'package:battery_info/model/android_battery_info.dart';
 import 'package:flutter/material.dart';
 import 'package:fever_therm/widgets/drawer.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:fever_therm/widgets/csv.dart';
 
 class HomePage extends StatelessWidget {
   final bool showThermalState;
@@ -251,20 +252,22 @@ class HomePage extends StatelessWidget {
               },
             ),
           if (showCsvData)
-            StreamBuilder<List<List<dynamic>>>(
-              stream: getCsvDataCallback(),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return CustomLoadingAnimation();
-                } else if (snapshot.hasData) {
-                  final csvData = snapshot.data;
-                  return CsvDataWidget(csvData: csvData);
-                } else if (snapshot.hasError) {
-                  return Text('Error: ${snapshot.error}');
-                } else {
-                  return SizedBox(); // Handle other cases as needed.
-                }
-              },
+            SingleChildScrollView(
+              child: StreamBuilder<List<List<dynamic>>>(
+                stream: getCsvDataCallback(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return CustomLoadingAnimation();
+                  } else if (snapshot.hasData) {
+                    final csvData = snapshot.data;
+                    return CsvDataWidget(csvData: csvData);
+                  } else if (snapshot.hasError) {
+                    return Text('Error: ${snapshot.error}');
+                  } else {
+                    return SizedBox(); // Handle other cases as needed.
+                  }
+                },
+              ),
             ),
         ],
       ),

@@ -1,7 +1,10 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
+// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, division_optimization
 
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:cpu_reader/cpu_reader.dart';
+import 'package:cpu_reader/cpuinfo.dart';
+import 'package:battery_info/battery_info_plugin.dart';
 
 class CsvDataWidget extends StatefulWidget {
   final List<List<dynamic>>? csvData;
@@ -20,16 +23,69 @@ class CsvDataWidgetState extends State<CsvDataWidget> {
   void initState() {
     super.initState();
     _csvData = widget.csvData;
+    _startTimer();
+  }
+
+  void _startTimer() {
     _timer = Timer.periodic(Duration(seconds: 5), (Timer t) {
-      // Add your actual data to the CSV here
-      addRow([DateTime.now(), 30.5, 25.0]); // Replace this with your data
+      _fetchAndAddData();
     });
+  }
+
+  Future<void> _fetchAndAddData() async {
+    try {
+      // Fetch CPU and battery temperature data
+      final double cpuTemperature = await fetchCpuTemperature();
+      final int batteryTemperature = await fetchBatteryTemperature();
+
+      // Add the data to the CSV
+      addRow([DateTime.now(), cpuTemperature, batteryTemperature]);
+    } catch (error) {
+      print("Error fetching or adding data: $error");
+    }
+  }
+
+  Future<double> fetchCpuTemperature() async {
+    try {
+      // Fetch CPU temperature
+      final CpuInfo cpuInfo = await CpuReader.cpuInfo;
+      final double cpuTemperature = cpuInfo.cpuTemperature ?? 0.0;
+      return cpuTemperature;
+    } catch (error) {
+      print("Error fetching CPU temperature: $error");
+      return 0.0;
+    }
+  }
+
+  Future<int> fetchBatteryTemperature() async {
+    try {
+      // Fetch battery information
+      final batteryInfo = await BatteryInfoPlugin().androidBatteryInfo;
+
+      if (batteryInfo != null && batteryInfo.temperature != null) {
+        final int batteryTemperature = (batteryInfo.temperature! / 1)
+            .toInt(); // Convert to Celsius and to an integer
+        return batteryTemperature;
+      } else {
+        print("Battery temperature data is not available.");
+        return 0; // Return a default value (0) in case of missing data
+      }
+    } catch (error) {
+      print("Error fetching battery temperature: $error");
+      return 0; // Return 0 in case of any errors
+    }
   }
 
   void addRow(List<dynamic> newRow) {
     setState(() {
       _csvData?.add(newRow);
     });
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
   }
 
   @override
@@ -51,7 +107,6 @@ class CsvDataWidgetState extends State<CsvDataWidget> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Use square brackets here
           Text(
             'CSV Data',
             style: TextStyle(

@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_const_constructors, use_key_in_widget_constructors, prefer_const_literals_to_create_immutables
 
 import 'package:fever_therm/widgets/csv.dart';
+import 'dart:ui';
 import 'package:thermal/thermal.dart';
 import 'package:battery_info/model/android_battery_info.dart';
 import 'package:flutter/material.dart';
@@ -255,20 +256,22 @@ class HomePage extends StatelessWidget {
               ),
             if (showCsvData)
               SingleChildScrollView(
-                child: StreamBuilder<List<List<dynamic>>>(
-                  stream: getCsvDataCallback(),
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return CustomLoadingAnimation();
-                    } else if (snapshot.hasData) {
-                      final csvData = snapshot.data;
-                      return CsvDataWidget(csvData: csvData);
-                    } else if (snapshot.hasError) {
-                      return Text('Error: ${snapshot.error}');
-                    } else {
-                      return SizedBox(); // Handle other cases as needed.
-                    }
-                  },
+                child: Scrollbar(
+                  child: StreamBuilder<List<List<dynamic>>>(
+                    stream: getCsvDataCallback(),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return CustomLoadingAnimation();
+                      } else if (snapshot.hasData) {
+                        final csvData = snapshot.data;
+                        return CsvDataWidget(csvData: csvData);
+                      } else if (snapshot.hasError) {
+                        return Text('Error: ${snapshot.error}');
+                      } else {
+                        return SizedBox(); // Handle other cases as needed.
+                      }
+                    },
+                  ),
                 ),
               ),
           ],

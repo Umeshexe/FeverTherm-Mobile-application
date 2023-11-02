@@ -70,7 +70,7 @@ class HomePage extends StatelessWidget {
                   } else if (snapshot.hasData) {
                     final thermalStatus = snapshot.data;
                     return Card(
-                      color: Colors.blueGrey,
+                      color: Color.fromARGB(255, 255, 98, 0),
                       margin: EdgeInsets.all(8.0),
                       child: Padding(
                         padding: const EdgeInsets.all(16.0),
@@ -134,7 +134,10 @@ class HomePage extends StatelessWidget {
                   } else if (snapshot.hasData) {
                     final light = snapshot.data ?? 0.0;
                     return Card(
-                      color: Colors.blueGrey,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(4.0),
+                      ),
+                      color: Colors.deepPurple,
                       margin: EdgeInsets.all(8.0),
                       child: Padding(
                         padding: const EdgeInsets.all(16.0),
@@ -146,6 +149,7 @@ class HomePage extends StatelessWidget {
                               style: TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
+                                color: Colors.white,
                               ),
                             ),
                           ],

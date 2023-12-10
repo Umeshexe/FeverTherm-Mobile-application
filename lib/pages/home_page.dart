@@ -2,6 +2,10 @@
 
 import 'package:fever_therm/widgets/csv.dart';
 import 'dart:ui';
+import 'dart:io';
+import 'package:path_provider/path_provider.dart';
+import 'package:file_picker/file_picker.dart';
+import 'package:csv/csv.dart';
 import 'package:thermal/thermal.dart';
 import 'package:battery_info/model/android_battery_info.dart';
 import 'package:flutter/material.dart';
@@ -43,6 +47,33 @@ class HomePage extends StatelessWidget {
     required this.toggleBatteryInfoCallback,
     required this.toggleCsvDataCallback,
   });
+
+  void downloadCsv(List<List<dynamic>> csvData) async {
+    try {
+      String csv = const ListToCsvConverter().convert(csvData);
+
+      final directoryPath = await FilePicker.platform.getDirectoryPath();
+
+      if (directoryPath != null) {
+        final file = File('$directoryPath/myCsvFile.csv');
+        final exists = await file.exists();
+
+        if (exists) {
+          // If the file exists, append the new data
+          await file.writeAsString('\n$csv', mode: FileMode.append);
+        } else {
+          // If the file doesn't exist, create a new file
+          await file.writeAsString(csv);
+        }
+
+        print('CSV file saved at $directoryPath/myCsvFile.csv');
+      } else {
+        print('No path selected for saving the file');
+      }
+    } catch (e) {
+      print('Error downloading CSV: $e');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -268,7 +299,21 @@ class HomePage extends StatelessWidget {
                         return CustomLoadingAnimation();
                       } else if (snapshot.hasData) {
                         final csvData = snapshot.data;
-                        return CsvDataWidget(csvData: csvData);
+                        return Column(
+                          children: [
+                            CsvDataWidget(csvData: csvData),
+                            ElevatedButton(
+                              onPressed: () {
+                                if (csvData != null) {
+                                  downloadCsv(csvData);
+                                } else {
+                                  print('csvData is null');
+                                }
+                              },
+                              child: Text('Download CSV'),
+                            ),
+                          ],
+                        );
                       } else if (snapshot.hasError) {
                         return Text('Error: ${snapshot.error}');
                       } else {
